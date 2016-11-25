@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">To Do</string>
+    <string name="title">"TO DO LIST APP!"</string>
+    <string name="subtitle">Long-press an item to remove it.</string>
+    <string name="add">ADD</string>
+    <string name="hint">What I need to do..</string>
+</resources>
