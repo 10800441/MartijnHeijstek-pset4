@@ -1,37 +1,42 @@
 package com.example.marty_000.todolist_pset4;
 
+/** App: ToDoList
+ *  25-11-2016
+ *  Martijn Heijstek, 1000441
+ *
+ *  This class shows the toDoList to the user and transmits
+ *  actions of the user (such as adding, deleting and updating)
+ *  to the DBHelper class.
+ */
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-        import android.os.Bundle;
-        import android.view.View;
-import android.view.WindowManager;
+import android.os.Bundle;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-        import android.widget.ArrayAdapter;
-        import android.widget.EditText;
-        import android.widget.ListView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private DBHelper helper;
-    ListView listView;
-    EditText editText;
-    SharedPreferences prefs;
-    ArrayAdapter<ToDoItem> adapter;
-    ArrayList<ToDoItem> toDoList;
-    Context context;
+    private ListView listView;
+    private EditText editText;
+    private SharedPreferences prefs;
+    private ArrayAdapter<ToDoItem> adapter;
+    private ArrayList<ToDoItem> toDoList;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         context = getApplicationContext();
         editText = (EditText) findViewById(R.id.editText);
@@ -41,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         // Load three toDoItems on first initialization
         prefs = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         if (!prefs.contains("toDoList")) {
-
 
             helper.create(new ToDoItem("Welcome user!"));
             helper.create(new ToDoItem("Add your to-do items"));
@@ -54,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         updateAdapter();
     }
 
-        // This function will update the listview
+    // This function will update the listview
     private void updateAdapter(){
         toDoList = helper.read();
 
@@ -73,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Tap an item to edit
+        // Tap to edit an item
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
@@ -88,10 +92,9 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(context, "item is not editable", Toast.LENGTH_SHORT).show();
                     updateAdapter();
                 }
-                }
+            }
         });
     }
-
 
     // Add a new item to the listView
     public void add(View view) {
@@ -108,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Pop up screen that gives the user the ability to change an item
-    public void popUp(final int id, String popUpText){
+    public void popUp(final int id,final String popUpText){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
         alert.setTitle("Update ToDo");
@@ -122,21 +125,24 @@ public class MainActivity extends AppCompatActivity {
         final EditText input = new EditText(this);
         input.setText(popUpText);
         alert.setView(input);
-        // Set the cursor to the right of the text
+
+        // Set the cursor to the right of the text i the editText
         input.setSelection(input.getText().length());
 
         // Change the ToDoItem
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                if( input.getText().length() != 0){
+                if(input.getText().length() != 0){
                     helper.update(new ToDoItem(id, input.getText().toString()));
+                    updateAdapter();
                 } else {
                     Toast.makeText(context, "Please enter text!", Toast.LENGTH_SHORT).show();
+                    popUp(id, popUpText);
                 }
-                updateAdapter();
             }
         });
 
+        // Cancel popUp
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 dialog.cancel();
@@ -144,5 +150,4 @@ public class MainActivity extends AppCompatActivity {
         });
         alert.show();
     }
-
 }

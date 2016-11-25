@@ -1,9 +1,13 @@
 package com.example.marty_000.todolist_pset4;
 
-/**
- * Created by marty_000 on 22-11-2016.
+/** App: ToDoList
+ *  25-11-2016
+ *  Martijn Heijstek, 1000441
+ *
+ *  This class makes a toDoItem with an id and text.
  */
 
+// One toDoItem
 public class ToDoItem{
     public int id_number;
     public String text;

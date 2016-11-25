@@ -1,62 +1,64 @@
 package com.example.marty_000.todolist_pset4;
 
+/** App: ToDoList
+ *  25-11-2016
+ *  Martijn Heijstek, 1000441
+ *
+ *  This class handles all interactions with the SQLite database.
+ */
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.ArrayAdapter;
-
 import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
-    // Set fields of database schema
-    private static final String DATABASE_NAME = "db113.db";
-    private static final int DATABASE_VERSION = 1;
-    private static final String TABLE = "todo_table";
-
+    private static final String DB_NAME = "db113.db";
+    private static final int DB_VERSION = 1;
+    private static final String DB_TABLE = "todo_table";
     private String todoString = "todo_string";
 
     // Constructor
     public DBHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, DB_NAME, null, DB_VERSION);
     }
 
-    // onCreate
+    // execute on databse creation
     @Override
     public void onCreate(SQLiteDatabase db) {
         // Query
-        String CREATE_TABLE = "CREATE TABLE " + TABLE + " ( _id INTEGER PRIMARY KEY AUTOINCREMENT , "
+        String CREATE_TABLE = "CREATE TABLE " + DB_TABLE + " ( _id INTEGER PRIMARY KEY AUTOINCREMENT , "
                 + todoString + " TEXT )";
         db.execSQL(CREATE_TABLE);
     }
 
-    // onUpgrade
+    // executed when database is updated
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DB_TABLE);
         onCreate(db);
     }
 
     // CRUD methods
-
-    // Create
+    // Create new item in database
     public void create(ToDoItem item) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(todoString, item.text);
 
-        db.insert(TABLE, null, values);
+        db.insert(DB_TABLE, null, values);
         db.close();
     }
 
-    // Read
+    // Read database
     public ArrayList<ToDoItem> read() {
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<ToDoItem> todo_list = new ArrayList<>();
 
-        String query = "SELECT _id , " + todoString + " FROM " + TABLE;
+        String query = "SELECT _id , " + todoString + " FROM " + DB_TABLE;
         Cursor cursor = db.rawQuery(query, null);
 
         while(cursor.moveToNext()) {
@@ -72,20 +74,20 @@ public class DBHelper extends SQLiteOpenHelper {
         return todo_list;
     }
 
-    // update
+    // update item in database
     public void update(ToDoItem item) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(todoString, item.text);
-        db.update(TABLE, values, "_id = ? ", new String[] {String.valueOf(item.id_number)});
+        db.update(DB_TABLE, values, "_id = ? ", new String[] {String.valueOf(item.id_number)});
         db.close();
     }
 
-    // delete
+    // delete item from database
     public void delete(ToDoItem item) {
         int id = item.id_number;
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(TABLE, " _id = ? ", new String[] {String.valueOf(id)});
+        db.delete(DB_TABLE, " _id = ? ", new String[] {String.valueOf(id)});
         db.close();
     }
 }
